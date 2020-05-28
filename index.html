@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+
+
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+      integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+      crossorigin="anonymous"
+    />
+    <link
+      href="https://fonts.googleapis.com/css?family=Open+Sans&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="style.css" />
+    <title>Work Day Scheduler</title>
+  </head>
+
+  <body>
+    <header class="jumbotron">
+      <h1 class="display-3">Work Day Scheduler</h1>
+      <p class="lead">A simple calendar app for scheduling your work day</p>
+      <p id="currentDay" class="lead"></p>
+    </header>
+    <div class="container">
+      <!-- Timeblocks go here -->
+      <table class="time-block">
+      </table>
+    </div>
+  </body>
+
+  <script src="https://code.jquery.com/jquery-3.4.1.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+
+  <script type="text/javascript">
+
+    $(document).ready(function() {
+      $(".saveBtn").on("click", function() {
+        var text = $("#task_" + this.id).val();
+        localStorage.setItem("task_" + this.id, text);
+      });
+
+      $("textarea").each(function(index) {
+        this.value = localStorage.getItem(this.id);
+      });
+
+    });
+
+    var times = ["9 AM", "10 AM", "11 AM", "12 PM", "1 PM", "2 PM", "3 PM", "4 PM", "5 PM"]; 
+
+    var i = 0;
+    for (i = 9; i < 18; i++) {
+      var hour = $("<td>");
+      hour.addClass("hour");
+
+      if (i > 12) {
+        hour.text((i - 12).toString() + "PM");
+      }
+      else if (i == 12) {
+        hour.text((i).toString() + "PM");
+      }
+      else {
+        hour.text((i).toString() + "AM");
+      }
+
+      var timeClass = "past";
+      var currentTime = parseInt(moment().format("HH"));
+
+      if (currentTime == i) {
+        timeClass = "present";
+      }
+      else if (currentTime > i) {
+        timeClass = "past";
+      }
+      else if (currentTime < i) {
+        timeClass = "future";
+      }
+
+      var content = $("<td>");
+      content.addClass(timeClass);
+
+      var id = moment().hour(i).minute(0).second(0).millisecond(0).unix();
+
+      var textarea = $("<textarea>");
+      textarea.attr("id", "task_" + id);
+      content.append(textarea);
+
+      var save = $("<td>");
+      save.addClass("saveBtn");
+      save.text("Save");
+      save.attr("id", id);
+
+      var row = $("<tr>");
+      row.addClass("row");
+
+      row.append(hour);
+      row.append(content);
+      row.append(save);
+
+      $(".time-block").append(row);
+    }
+
+</script>
+
+</html>
